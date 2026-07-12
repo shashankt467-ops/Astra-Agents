@@ -1,0 +1,42 @@
+# TruthShield AI - Task Checklist
+
+- [x] Setup Workspace Directories & Backend Boilerplate
+  - [x] Initialize backend folders and dependencies in `backend/package.json`
+  - [x] Implement MongoDB config in `backend/config/db.js`
+  - [x] Write system rules in `backend/config/constants.js`
+- [x] Database Schema Definition
+  - [x] Implement Mongoose schema `Report.js`
+  - [x] Implement Mongoose schema `AuditLog.js`
+  - [x] Implement Mongoose schema `PlannerSession.js`
+- [x] Core Services & Threat Classifiers
+  - [x] Build `backend/services/ocrService.js` (Tesseract wrapper)
+  - [x] Build `backend/services/pdfService.js` (pdf-parse utility)
+  - [x] Build `backend/services/threatClassifier.js` (scam checks and weights)
+- [x] Official MCP Server Implementation
+  - [x] Setup `mcp/package.json` using `@modelcontextprotocol/sdk`
+  - [x] Build MCP Server `mcp/mcpServer.js` containing Tools, Resources, and Prompts
+  - [x] Implement individual MCP tools in `mcp/tools/`
+  - [x] Implement individual MCP resources in `mcp/resources/`
+  - [x] Implement prompt templates in `mcp/prompts/`
+- [x] Express Gateway Server & Routes
+  - [x] Implement middlewares (Upload, Error Handler, Validator)
+  - [x] Implement controllers (`analysisController.js`, `reportController.js`)
+  - [x] Build routes (`analysisRoutes.js` with SSE, `reportRoutes.js` for CRUD)
+  - [x] Create entry point `backend/server.js` with Helmet/CORS/Rate limiting
+- [x] Frontend Scaffolding & Design System
+  - [x] Scaffold Vite + React app inside `frontend/`
+  - [x] Set up Tailwind CSS configuration and theme styling
+  - [x] Implement responsive Layout shell, custom icons, and global variables
+- [x] Frontend Core Components & Views
+  - [x] Build Sidebar navigation with light/dark toggling support
+  - [x] Build animated `RiskGauge` and execution `Timeline` stepper
+  - [x] Implement focused modules: Text, URL, PDF, and OCR
+  - [x] Build dual-pane `PlannerModule` to showcase logs and report results
+  - [x] Implement History datatable with CRUD operations
+  - [x] Implement Settings and System health dashboards
+- [x] Integration & End-to-End Testing
+  - [x] Wire up APIs and EventSource SSE client-side hooks
+  - [x] Conduct end-to-end testing of OCR, PDF parser, and Planner
+- [x] Deployment Settings
+  - [x] Create `nitro.json`
+  - [x] Verify build and run scripts for production
