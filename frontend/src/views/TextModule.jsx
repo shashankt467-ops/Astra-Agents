@@ -1,0 +1,159 @@
+import React, { useState } from 'react';
+import axios from 'axios';
+import { ShieldCheck, AlertTriangle, RefreshCw } from 'lucide-react';
+import RiskGauge from '../components/RiskGauge';
+
+const TextModule = () => {
+  const [text, setText] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [result, setResult] = useState(null);
+  const [error, setError] = useState('');
+
+  const handleAnalyze = async (e) => {
+    e.preventDefault();
+    if (!text.trim()) return;
+
+    setLoading(true);
+    setError('');
+    setResult(null);
+
+    try {
+      const res = await axios.post('/api/text/analyze', { text });
+      if (res.data && res.data.success) {
+        setResult(res.data.data);
+      } else {
+        setError('Failed to analyze the text. Please try again.');
+      }
+    } catch (err) {
+      console.error(err);
+      setError(
+        err.response?.data?.error?.message || 
+        'Unable to connect to the backend server. Verify service status.'
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const clearInput = () => {
+    setText('');
+    setResult(null);
+    setError('');
+  };
+
+  return (
+    <div className="space-y-6">
+      <div className="flex flex-col gap-1.5">
+        <h2 className="text-xl font-extrabold text-zinc-800 dark:text-zinc-100">
+          Text Investigation Workspace
+        </h2>
+        <p className="text-xs text-zinc-400 dark:text-zinc-500 font-semibold uppercase tracking-wider">
+          Direct Scanning of Scam notice copies and spam messages
+        </p>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Left Side: Input Box */}
+        <div className="lg:col-span-2 space-y-4">
+          <form onSubmit={handleAnalyze} className="glass-card space-y-4">
+            <div>
+              <label className="block text-xs font-bold uppercase tracking-wider text-zinc-400 dark:text-zinc-500 mb-2">
+                Paste Investigation Text
+              </label>
+              <textarea
+                value={text}
+                onChange={(e) => setText(e.target.value)}
+                placeholder="Paste the spam email content, SMS message, prize claim notice, or blocked account threat here..."
+                rows={8}
+                className="w-full glass-input resize-none"
+                maxLength={8000}
+                required
+              />
+            </div>
+
+            {error && (
+              <div className="p-3.5 bg-rose-500/10 border border-rose-500/20 text-rose-500 text-xs font-semibold rounded-xl flex items-center gap-2">
+                <AlertTriangle size={16} />
+                {error}
+              </div>
+            )}
+
+            <div className="flex gap-3 justify-end">
+              {text && (
+                <button
+                  type="button"
+                  onClick={clearInput}
+                  className="px-4 py-2.5 rounded-xl border border-zinc-200 dark:border-zinc-800 text-xs font-bold text-zinc-500 dark:text-zinc-400 hover:bg-zinc-100/50 dark:hover:bg-obsidian-800/50 transition-all"
+                >
+                  Clear Workspace
+                </button>
+              )}
+              <button
+                type="submit"
+                disabled={loading || !text.trim()}
+                className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-cyber-cyan to-cyber-teal hover:from-cyber-cyan hover:to-cyber-cyan text-zinc-900 font-extrabold text-xs shadow-md shadow-cyber-cyan/15 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+              >
+                {loading ? <RefreshCw size={14} className="animate-spin" /> : null}
+                {loading ? 'Analyzing Content...' : 'Run Text Scan'}
+              </button>
+            </div>
+          </form>
+        </div>
+
+        {/* Right Side: Quick Risk Assessment Cards */}
+        <div>
+          {result ? (
+            <div className="glass-card flex flex-col items-center text-center space-y-6 animate-fadeIn">
+              <RiskGauge 
+                score={result.riskScore} 
+                classification={result.classification} 
+                confidence={85} 
+              />
+              
+              <div className="w-full text-left border-t border-zinc-200/40 dark:border-zinc-800/30 pt-4 space-y-3.5">
+                <div>
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-zinc-400 dark:text-zinc-500 mb-1">
+                    Matched Scam Keywords
+                  </h4>
+                  {result.matchedKeywords.length > 0 ? (
+                    <div className="flex flex-wrap gap-1.5 mt-1.5">
+                      {result.matchedKeywords.map((kw, i) => (
+                        <span key={i} className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 bg-rose-500/10 text-rose-500 rounded-full border border-rose-500/10">
+                          {kw}
+                        </span>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-xs font-semibold text-emerald-500 flex items-center gap-1.5">
+                      <ShieldCheck size={14} />
+                      No scam signature keywords matched.
+                    </p>
+                  )}
+                </div>
+
+                <div>
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-zinc-400 dark:text-zinc-500 mb-1">
+                    Defensive Recommendations
+                  </h4>
+                  <p className="text-xs text-zinc-600 dark:text-zinc-300 font-medium leading-relaxed mt-1">
+                    {result.recommendation}
+                  </p>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="glass-card flex flex-col items-center justify-center text-center py-16 text-zinc-400 dark:text-zinc-600">
+              <ShieldCheck size={40} className="stroke-zinc-300 dark:stroke-zinc-800 animate-pulse mb-3" />
+              <p className="text-sm font-bold">Workspace Ready</p>
+              <p className="text-xs max-w-[200px] mt-1 font-medium leading-relaxed">
+                Paste message content on the left to trigger the MCP TextAnalysisTool.
+              </p>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default TextModule;

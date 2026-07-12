@@ -1,0 +1,27 @@
+{
+  "name": "truthshield-ai",
+  "version": "1.0.0",
+  "type": "fullstack-mcp-application",
+  "build": {
+    "frontend": {
+      "src": "frontend",
+      "dist": "frontend/dist",
+      "buildCommand": "npm run build"
+    },
+    "backend": {
+      "src": "backend",
+      "entrypoint": "backend/server.js",
+      "env": {
+        "PORT": "5000",
+        "NODE_ENV": "production"
+      }
+    },
+    "mcp": {
+      "src": "mcp",
+      "entrypoint": "mcp/mcpServer.js"
+    }
+  },
+  "runtime": {
+    "node": ">=20.0.0"
+  }
+}

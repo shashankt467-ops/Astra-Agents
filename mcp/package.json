@@ -1,0 +1,16 @@
+{
+  "name": "truthshield-mcp-server",
+  "version": "1.0.0",
+  "description": "TruthShield AI - Model Context Protocol Server",
+  "type": "module",
+  "main": "mcpServer.js",
+  "scripts": {
+    "start": "node mcpServer.js"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^0.6.0",
+    "mongoose": "^8.4.1",
+    "pdf-parse": "^1.1.1",
+    "tesseract.js": "^5.1.0"
+  }
+}
